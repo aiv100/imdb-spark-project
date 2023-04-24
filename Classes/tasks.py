@@ -27,4 +27,8 @@ class Tasks:
         df_task1 = self.spark_session.read.csv("Data/title_akas.tsv", schema=self.schema_tsv_title_akas,
                                                header=True, sep="\t")
         # df_task1.show(truncate=False)
-        df_task1.select("title", "region").where(f.col("region") == "UA").show()
+        df_result = df_task1.select("title", "region").where(f.col("region") == "UA")
+        df_result.show()
+        print("I'm writing ...")
+        df_result.write.csv("Results/task1")
+        # df_result.write.format('csv').option('header','true').option('sep','\t').save('Results/titanic.tsv')
