@@ -1,3 +1,6 @@
+from Classes.tasks import Tasks
+
+
 class Menu:
     def __init__(self):
         self.items = (
@@ -31,8 +34,9 @@ class Menu:
                 self.switch_item(sel_item)
 
     def switch_item(self, item):
+        tasks = Tasks()
         if item == 1:
-            print(1)
+            tasks.show_task1()
         elif item == 2:
             print(2)
         elif item == 3:
