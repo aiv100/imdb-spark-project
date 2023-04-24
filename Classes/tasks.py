@@ -26,5 +26,5 @@ class Tasks:
     def show_task1(self):
         df_task1 = self.spark_session.read.csv("Data/title_akas.tsv", schema=self.schema_tsv_title_akas,
                                                header=True, sep="\t")
-        df_task1.show(truncate=False)
+        # df_task1.show(truncate=False)
         df_task1.select("title", "region").where(f.col("region") == "UA").show()
