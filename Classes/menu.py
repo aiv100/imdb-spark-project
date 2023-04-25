@@ -38,7 +38,7 @@ class Menu:
         if item == 1:
             tasks.show_task1()
         elif item == 2:
-            print(2)
+            tasks.show_task2()
         elif item == 3:
             print(3)
         elif item == 4:

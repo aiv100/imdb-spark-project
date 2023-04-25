@@ -22,13 +22,25 @@ class Tasks:
                                                    t.StructField("types", t.StringType(), False),
                                                    t.StructField("attributes", t.StringType(), False),
                                                    t.StructField("isOriginalTitle", t.IntegerType(), False)])
+        self.schema_tsv_name_basics = t.StructType([t.StructField("nconst", t.StringType(), False),
+                                                    t.StructField("primaryName", t.StringType(), False),
+                                                    t.StructField("birthYear", t.IntegerType(), False),
+                                                    t.StructField("deathYear", t.IntegerType(), False),
+                                                    t.StructField("primaryProfession", t.StringType(), False),
+                                                    t.StructField("knownForTitles", t.StringType(), False)])
 
     def show_task1(self):
         df_task1 = self.spark_session.read.csv("Data/title_akas.tsv", schema=self.schema_tsv_title_akas,
                                                header=True, sep="\t")
-        # df_task1.show(truncate=False)
-        df_result = df_task1.select("title", "region").where(f.col("region") == "UA")
-        df_result.show()
-        print("I'm writing ...")
-        df_result.write.csv("Results/task1")
-        # df_result.write.format('csv').option('header','true').option('sep','\t').save('Results/titanic.tsv')
+        df_task1 = df_task1.select("title", "region").where(f.col("region") == "UA")
+        df_task1.show()
+        # print("I'm writing ...")
+        # df_task1.write.csv("Results/task1")
+
+    def show_task2(self):
+        df_task2 = self.spark_session.read.csv("Data/name_basics.tsv", schema=self.schema_tsv_name_basics,
+                                               header=True, sep="\t")
+        df_task2 = df_task2.select("primaryName", "birthYear")
+        df_task2 = df_task2.na.fill(0)
+        df_task2 = df_task2.where((f.col("birthYear") >= 1800) & (f.col("birthYear") < 1900))
+        df_task2.show()
