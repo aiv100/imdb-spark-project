@@ -41,6 +41,13 @@ class Tasks:
                                                      t.StructField("runtimeMinutes", t.IntegerType(), False),
                                                      t.StructField("genres", t.StringType(), False)])
 
+        self.schema_tsv_title_principals = t.StructType([t.StructField("tconst", t.StringType(), False),
+                                                         t.StructField("ordering", t.IntegerType(), False),
+                                                         t.StructField("nconst", t.StringType(), False),
+                                                         t.StructField("category", t.StringType(), False),
+                                                         t.StructField("job", t.StringType(), False),
+                                                         t.StructField("characters", t.StringType(), False)])
+
     def show_task1(self):
         df_task1 = self.spark_session.read.csv("Data/title_akas.tsv", schema=self.schema_tsv_title_akas,
                                                header=True, sep="\t")
@@ -64,3 +71,20 @@ class Tasks:
         df_task3 = df_task3.na.fill(0)
         df_task3 = df_task3.where((f.col("runtimeMinutes") > 120) & (f.col("titleType") == "movie"))
         df_task3.show()
+
+    def show_task4(self):
+        df_actors = self.spark_session.read.csv("Data/name_basics.tsv", schema=self.schema_tsv_name_basics,
+                                                header=True, sep="\t")
+        df_films = self.spark_session.read.csv("Data/title_basics.tsv", schema=self.schema_tsv_title_basics,
+                                               header=True, sep="\t")
+        df_actors_films = self.spark_session.read.csv("Data/title_principals.tsv",
+                                                      schema=self.schema_tsv_title_principals, header=True, sep="\t")
+        df_actors = df_actors.select("primaryName", "nconst")
+        df_actors_films = df_actors_films.drop("ordering", "job")
+        df_films = df_films.select("tconst", "primaryTitle")
+        df_actors = df_actors.join(df_actors_films, df_actors.nconst == df_actors_films.nconst, "inner")
+        df_actors = df_actors.filter(df_actors.category == "actor")
+        df_actors = df_actors.join(df_films, df_actors.tconst == df_films.tconst, "inner")
+        df_actors = df_actors.drop("nconst", "tconst")
+        df_actors.show()
+
