@@ -14,6 +14,7 @@ class Tasks:
                               .appName("task app")
                               .config(conf=SparkConf())
                               .getOrCreate())
+
         self.schema_tsv_title_akas = t.StructType([t.StructField("titleId", t.StringType(), False),
                                                    t.StructField("ordering", t.IntegerType(), False),
                                                    t.StructField("title", t.StringType(), False),
@@ -22,6 +23,7 @@ class Tasks:
                                                    t.StructField("types", t.StringType(), False),
                                                    t.StructField("attributes", t.StringType(), False),
                                                    t.StructField("isOriginalTitle", t.IntegerType(), False)])
+
         self.schema_tsv_name_basics = t.StructType([t.StructField("nconst", t.StringType(), False),
                                                     t.StructField("primaryName", t.StringType(), False),
                                                     t.StructField("birthYear", t.IntegerType(), False),
