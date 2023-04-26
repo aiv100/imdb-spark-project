@@ -3,10 +3,11 @@ from pyspark import SparkConf
 from pyspark.sql import SparkSession, Window
 import pyspark.sql.types as t
 import pyspark.sql.functions as f
+
 findspark.init()
 
-TOP_REGIONS=100
-
+TOP_REGIONS = 100
+TOP_FILMS = 50
 
 class Tasks:
     def __init__(self):
@@ -48,6 +49,11 @@ class Tasks:
                                                          t.StructField("category", t.StringType(), False),
                                                          t.StructField("job", t.StringType(), False),
                                                          t.StructField("characters", t.StringType(), False)])
+
+        self.schema_tsv_title_episode = t.StructType([t.StructField("tconst", t.StringType(), False),
+                                                      t.StructField("parentTconst", t.StringType(), False),
+                                                      t.StructField("seasonNumber", t.IntegerType(), False),
+                                                      t.StructField("episodeNumber", t.IntegerType(), False)])
 
     def show_task1(self):
         df_task1 = self.spark_session.read.csv("Data/title_akas.tsv", schema=self.schema_tsv_title_akas,
@@ -100,3 +106,14 @@ class Tasks:
         df_task5 = df_task5.orderBy(f.col("count").desc()).limit(TOP_REGIONS)
         print("Top 100 of them from the region with the biggest count")
         df_task5.show(TOP_REGIONS)
+
+    def show_task6(self):
+        df_films = self.spark_session.read.csv("Data/title_basics.tsv", schema=self.schema_tsv_title_basics,
+                                               header=True, sep="\t")
+        df_episodes = self.spark_session.read.csv("Data/title_episode.tsv", schema=self.schema_tsv_title_episode,
+                                                 header=True, sep="\t")
+        df_films = df_films.select("tconst", "primaryTitle")
+        df_episodes = df_episodes.select("tconst", "episodeNumber")
+        df_films = df_films.join(df_episodes, df_films.tconst == df_episodes.tconst, "inner")
+        df_films = df_films.drop("tconst").orderBy(f.col("episodeNumber").desc()).limit(TOP_FILMS)
+        df_films.show(TOP_FILMS)
