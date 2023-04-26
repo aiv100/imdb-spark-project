@@ -44,7 +44,7 @@ class Menu:
         elif item == 4:
             tasks.show_task4()
         elif item == 5:
-            print(5)
+            tasks.show_task5()
         elif item == 6:
             print(6)
         elif item == 7:

@@ -3,8 +3,9 @@ from pyspark import SparkConf
 from pyspark.sql import SparkSession, Window
 import pyspark.sql.types as t
 import pyspark.sql.functions as f
-
 findspark.init()
+
+TOP_REGIONS=100
 
 
 class Tasks:
@@ -88,3 +89,14 @@ class Tasks:
         df_actors = df_actors.drop("nconst", "tconst")
         df_actors.show()
 
+    def show_task5(self):
+        df_task5 = self.spark_session.read.csv("Data/title_akas.tsv", schema=self.schema_tsv_title_akas,
+                                               header=True, sep="\t")
+        df_task5 = df_task5.select("title", "region")
+        df_task5 = df_task5.groupBy("region").count()
+        df_task5 = df_task5.orderBy(f.col("count")).limit(TOP_REGIONS)
+        print("Top 100 of them from the region with the smallest count")
+        df_task5.show(TOP_REGIONS)
+        df_task5 = df_task5.orderBy(f.col("count").desc()).limit(TOP_REGIONS)
+        print("Top 100 of them from the region with the biggest count")
+        df_task5.show(TOP_REGIONS)
