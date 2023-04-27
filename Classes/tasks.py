@@ -16,6 +16,7 @@ COUNT_GROUP_VIEW = 5
 
 class Tasks:
     def __init__(self):
+
         self.spark_session = (SparkSession.builder
                               .master("local")
                               .appName("task app")
