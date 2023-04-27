@@ -6,8 +6,13 @@ import pyspark.sql.functions as f
 
 findspark.init()
 
-TOP_REGIONS = 100
-TOP_FILMS = 50
+TOP_COUNT_REGIONS = 100
+
+TOP_COUNT_EPISODES = 50
+
+TOP_RATING_COUNT = 10
+COUNT_GROUP_VIEW = 5
+
 
 class Tasks:
     def __init__(self):
@@ -55,6 +60,10 @@ class Tasks:
                                                       t.StructField("seasonNumber", t.IntegerType(), False),
                                                       t.StructField("episodeNumber", t.IntegerType(), False)])
 
+        self.schema_tsv_title_ratings = t.StructType([t.StructField("tconst", t.StringType(), False),
+                                                      t.StructField("averageRating", t.DoubleType(), False),
+                                                      t.StructField("numVotes", t.IntegerType(), False)])
+
     def show_task1(self):
         df_task1 = self.spark_session.read.csv("Data/title_akas.tsv", schema=self.schema_tsv_title_akas,
                                                header=True, sep="\t")
@@ -100,20 +109,47 @@ class Tasks:
                                                header=True, sep="\t")
         df_task5 = df_task5.select("title", "region")
         df_task5 = df_task5.groupBy("region").count()
-        df_task5 = df_task5.orderBy(f.col("count")).limit(TOP_REGIONS)
+        df_task5 = df_task5.orderBy(f.col("count")).limit(TOP_COUNT_REGIONS)
         print("Top 100 of them from the region with the smallest count")
-        df_task5.show(TOP_REGIONS)
-        df_task5 = df_task5.orderBy(f.col("count").desc()).limit(TOP_REGIONS)
+        df_task5.show(TOP_COUNT_REGIONS)
+        df_task5 = df_task5.orderBy(f.col("count").desc()).limit(TOP_COUNT_REGIONS)
         print("Top 100 of them from the region with the biggest count")
-        df_task5.show(TOP_REGIONS)
+        df_task5.show(TOP_COUNT_REGIONS)
 
     def show_task6(self):
         df_films = self.spark_session.read.csv("Data/title_basics.tsv", schema=self.schema_tsv_title_basics,
                                                header=True, sep="\t")
         df_episodes = self.spark_session.read.csv("Data/title_episode.tsv", schema=self.schema_tsv_title_episode,
-                                                 header=True, sep="\t")
+                                                  header=True, sep="\t")
         df_films = df_films.select("tconst", "primaryTitle")
         df_episodes = df_episodes.select("tconst", "episodeNumber")
         df_films = df_films.join(df_episodes, df_films.tconst == df_episodes.tconst, "inner")
-        df_films = df_films.drop("tconst").orderBy(f.col("episodeNumber").desc()).limit(TOP_FILMS)
-        df_films.show(TOP_FILMS)
+        df_films = df_films.drop("tconst").orderBy(f.col("episodeNumber").desc()).limit(TOP_COUNT_EPISODES)
+        df_films.show(TOP_COUNT_EPISODES)
+
+    def show_task7(self):
+        df_films = self.spark_session.read.csv("Data/title_basics.tsv", schema=self.schema_tsv_title_basics,
+                                               header=True, sep="\t")
+        df_films = df_films.na.fill(0).filter((f.col("startYear") != 0) & (f.col("endYear") != 0))
+        df_films = df_films.withColumn("decade", ((df_films.endYear - df_films.startYear) / 10 + 1).cast("int"))
+        df_ratings = self.spark_session.read.csv("Data/title_ratings.tsv", schema=self.schema_tsv_title_ratings,
+                                                 header=True, sep="\t")
+        df_films = df_films.join(df_ratings, df_films.tconst == df_ratings.tconst, "inner")
+        df_films = df_films.select("primaryTitle", "decade", "averageRating")
+        window_dept = Window.partitionBy("decade").orderBy(f.col("averageRating").desc())
+        df_films = df_films.withColumn("top", f.row_number().over(window_dept))
+        df_films = df_films.filter(f.col("top") <= TOP_RATING_COUNT)
+        df_films.show(COUNT_GROUP_VIEW * TOP_RATING_COUNT)
+
+    def show_task8(self):
+        df_films = self.spark_session.read.csv("Data/title_basics.tsv", schema=self.schema_tsv_title_basics,
+                                               header=True, sep="\t")
+        df_ratings = self.spark_session.read.csv("Data/title_ratings.tsv", schema=self.schema_tsv_title_ratings,
+                                                 header=True, sep="\t")
+        df_films = df_films.join(df_ratings, df_films.tconst == df_ratings.tconst, "inner")
+        df_films = df_films.select("primaryTitle", "genres", "averageRating")
+        df_films = df_films.filter(df_films.genres != "null")
+        window_dept = Window.partitionBy("genres").orderBy(f.col("averageRating").desc())
+        df_films = df_films.withColumn("top", f.row_number().over(window_dept))
+        df_films = df_films.filter(f.col("top") <= TOP_RATING_COUNT)
+        df_films.show(COUNT_GROUP_VIEW * TOP_RATING_COUNT)

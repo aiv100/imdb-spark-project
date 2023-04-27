@@ -48,9 +48,9 @@ class Menu:
         elif item == 6:
             tasks.show_task6()
         elif item == 7:
-            print(7)
+            tasks.show_task7()
         elif item == 8:
-            print(8)
+            tasks.show_task8()
         elif item == 0:
             print("By-by!!!")
         else:
