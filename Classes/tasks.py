@@ -151,7 +151,7 @@ class Tasks:
         df_films = self.spark_session.read.csv(PATH_TITLE_BASICS_TSV, schema=self.schema_tsv_title_basics,
                                                header=True, sep="\t")
         df_films = df_films.na.fill(0).filter((f.col("startYear") != 0) & (f.col("endYear") != 0))
-        df_films = df_films.withColumn("decade", ((df_films.endYear - df_films.startYear) / 10 + 1).cast("int"))
+        df_films = df_films.withColumn("decade", ((df_films.endYear % 100) / 10 + 1).cast("int"))
         df_ratings = self.spark_session.read.csv(PATH_TITLE_RATINGS_TSV, schema=self.schema_tsv_title_ratings,
                                                  header=True, sep="\t")
         df_films = df_films.join(df_ratings, df_films.tconst == df_ratings.tconst, "inner")
