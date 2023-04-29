@@ -16,12 +16,12 @@ TOP_COUNT_EPISODES = 50
 TOP_RATING_COUNT = 10
 COUNT_GROUP_VIEW = 5
 # -------------------------Paths to source files-----------------------------------------------
-PATH_TITLE_AKAS_TSV = "Data/title_akas.tsv"
-PATH_NAME_BASICS_TSV = "Data/name_basics.tsv"
-PATH_TITLE_BASICS_TSV = "Data/title_basics.tsv"
-PATH_TITLE_PRINCIPALS_TSV = "Data/title_principals.tsv"
-PATH_TITLE_EPISODE_TSV = "Data/title_episode.tsv"
-PATH_TITLE_RATINGS_TSV = "Data/title_ratings.tsv"
+PATH_TITLE_AKAS_TSV = "Data/title.akas.tsv"
+PATH_NAME_BASICS_TSV = "Data/name.basics.tsv"
+PATH_TITLE_BASICS_TSV = "Data/title.basics.tsv"
+PATH_TITLE_PRINCIPALS_TSV = "Data/title.principals.tsv"
+PATH_TITLE_EPISODE_TSV = "Data/title.episode.tsv"
+PATH_TITLE_RATINGS_TSV = "Data/title.ratings.tsv"
 # ---------------------------------------------------------------------------------------------
 
 
