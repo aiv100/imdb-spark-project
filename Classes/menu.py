@@ -15,6 +15,7 @@ ITEMS_OF_MENU = (
     "8. Get 10 titles of the most popular movies/series etc. by each genre",
     "0. Exit"
 )
+CHOICE_MESSAGE = "Choice number of items:"
 INCORRECT_INPUT_TO_CHOICE = "Incorrect input !!!"
 BY_BY = "By-by !!!"
 INCORRECT_NUMBER_OF_ITEM = "Incorrect number of item !!!"
@@ -39,7 +40,7 @@ class Menu:
             for item in self.items:
                 print(item, end="\n")
             print("---------------------------------------------------------------------------------------")
-            sel_item = input("Choice number of items:")
+            sel_item = input(CHOICE_MESSAGE)
             if not sel_item.isnumeric():
                 sel_item = -1
                 print(self.incorrect_input)
