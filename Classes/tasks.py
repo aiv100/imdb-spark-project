@@ -1,5 +1,4 @@
 import findspark
-from pip import __main__
 from pyspark import SparkConf
 from pyspark.sql import SparkSession, Window
 import pyspark.sql.types as t
@@ -197,7 +196,7 @@ class Tasks:
 
 
 # To test the operation of methods of this class, uncomment the desired task and run it
-if __name__ == __main__:
+if __name__ == "__main__":
     tasks = Tasks()
     # tasks.show_task1()
     # tasks.show_task2()
