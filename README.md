@@ -5,7 +5,7 @@
 ## The project also contains two folders:
 ### _Data_ - here are the source tsv - files that are used to implement project tasks
 ### _Results_ – result files created in the corresponding project tasks are stored here
-### If the project download starts with the main.py file, a menu appears in the console
+#### If the project download starts with the main.py file, a menu appears in the console
 ---------------------------------Task menu--------------------------------------------
 1. Get all titles of series/movies etc. that are available in Ukrainian
 2. Get the list of people’s names, who were born in the 19th century
@@ -18,7 +18,8 @@
 9. Exit
 ---------------------------------------------------------------------------------------
 Choice number of items:
-### from which you need to select the number of the corresponding project task.
+#### from which you need to select the number of the corresponding project task.
 ### But there is a possibility to launch the project from the tasks.py file, which is protected from "accidental" execution by the conditional statement
 ### if __name__ == __main__
 ### In which you need to uncomment the line of the corresponding task. Perhaps this launch path will be more optimal for testing.
+### Before writing the resulting files, the corresponding script issues the corresponding write request
